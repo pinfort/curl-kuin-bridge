@@ -11,14 +11,14 @@ BOOL WINAPI DllMain(HINSTANCE, DWORD, LPVOID)
 std::string dllPath = std::string("data\\libcurl-x64.dll");
 Curl DLLFuncs = Curl(dllPath);
 
-extern "C" _declspec(dllexport) SClass * curl_easy_init(SClass * me_)
+extern "C" _declspec(dllexport) SClass * export_curl_easy_init(SClass * me_)
 {
 	SCurl* me2 = (SCurl*)me_;
 	me2->Curl = DLLFuncs.curl_easy_init();
 	return me_;
 }
 
-extern "C" _declspec(dllexport) int curl_easy_setopt_org(SClass* me_, int option, void* parameter)
+extern "C" _declspec(dllexport) int export_curl_easy_setopt_org(SClass* me_, int option, void* parameter)
 {
 	// ’lŒ^—pBQÆŒ^‚ğ“n‚³‚È‚¢‚Å‚­‚¾‚³‚¢
 	// “Á‚É•¶š—ñ’ˆÓ
@@ -31,23 +31,23 @@ extern "C" _declspec(dllexport) int curl_easy_setopt_org(SClass* me_, int option
 	return DLLFuncs.curl_easy_setopt(handle, (CURLoption)option, parameter);
 }
 
-extern "C" _declspec(dllexport) int curl_easy_setopt_str(SClass * me_, int option, unsigned char* parameter)
+extern "C" _declspec(dllexport) int export_curl_easy_setopt_str(SClass * me_, int option, unsigned char* parameter)
 {
 	// •¶š—ñê—p
 	std::wstring param_wstr = KuinStrToWStr(parameter);
 	std::string param_str = std::string(param_wstr.begin(), param_wstr.end());
 
-	return curl_easy_setopt_org(me_, (CURLoption)option, (void*)param_str.c_str());
+	return export_curl_easy_setopt_org(me_, (CURLoption)option, (void*)param_str.c_str());
 }
 
-extern "C" _declspec(dllexport) int curl_easy_perform(SClass * me_)
+extern "C" _declspec(dllexport) int export_curl_easy_perform(SClass * me_)
 {
 	SCurl* me2 = (SCurl*)me_;
 	CURL* handle = me2->Curl;
 	return DLLFuncs.curl_easy_perform(handle);
 }
 
-extern "C" _declspec(dllexport) void curl_easy_cleanup(SClass * me_)
+extern "C" _declspec(dllexport) void export_curl_easy_cleanup(SClass * me_)
 {
 	SCurl* me2 = (SCurl*)me_;
 	CURL* handle = me2->Curl;
