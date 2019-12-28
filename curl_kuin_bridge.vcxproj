@@ -108,7 +108,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="src\curl.cpp" />
+    <ClCompile Include="src\common.cpp" />
     <ClCompile Include="src\curl_kuin_bridge.cpp" />
   </ItemGroup>
   <ItemGroup>

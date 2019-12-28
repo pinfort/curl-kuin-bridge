@@ -18,7 +18,7 @@
     <ClCompile Include="src\curl_kuin_bridge.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="src\curl.cpp">
+    <ClCompile Include="src\common.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

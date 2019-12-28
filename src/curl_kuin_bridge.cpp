@@ -35,9 +35,9 @@ extern "C" _declspec(dllexport) int export_curl_easy_setopt_str(SClass * me_, in
 {
 	// •¶š—ñê—p
 	std::wstring param_wstr = KuinStrToWStr(parameter);
-	std::string param_str = std::string(param_wstr.begin(), param_wstr.end());
+	std::string param_str = WstrToStr(param_wstr);
 
-	return export_curl_easy_setopt_org(me_, (CURLoption)option, (void*)param_str.c_str());
+	return export_curl_easy_setopt_org(me_, option, const_cast<char*>(param_str.c_str()));
 }
 
 extern "C" _declspec(dllexport) int export_curl_easy_perform(SClass * me_)
