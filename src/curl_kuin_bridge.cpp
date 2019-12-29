@@ -18,7 +18,7 @@ extern "C" _declspec(dllexport) SClass * export_curl_easy_init(SClass * me_)
 	return me_;
 }
 
-extern "C" _declspec(dllexport) int export_curl_easy_setopt_org(SClass* me_, int option, void* parameter)
+extern "C" _declspec(dllexport) int export_curl_easy_setopt_org(SClass* me_, signed long long option, void* parameter)
 {
 	// ’lŒ^—pBŽQÆŒ^‚ð“n‚³‚È‚¢‚Å‚­‚¾‚³‚¢
 	// “Á‚É•¶Žš—ñ’ˆÓ
@@ -31,7 +31,7 @@ extern "C" _declspec(dllexport) int export_curl_easy_setopt_org(SClass* me_, int
 	return DLLFuncs.curl_easy_setopt(handle, (CURLoption)option, parameter);
 }
 
-extern "C" _declspec(dllexport) int export_curl_easy_setopt_str(SClass * me_, int option, unsigned char* parameter)
+extern "C" _declspec(dllexport) int export_curl_easy_setopt_str(SClass * me_, signed long long option, unsigned char* parameter)
 {
 	// •¶Žš—ñê—p
 	std::wstring param_wstr = KuinStrToWStr(parameter);
@@ -45,6 +45,30 @@ extern "C" _declspec(dllexport) int export_curl_easy_perform(SClass * me_)
 	SCurl* me2 = (SCurl*)me_;
 	CURL* handle = me2->Curl;
 	return DLLFuncs.curl_easy_perform(handle);
+}
+
+static size_t WriteCallback(char* contents, size_t size, size_t nmemb, void* userp)
+{
+	((std::string*)userp)->append(contents);
+	return size * nmemb;
+}
+
+extern "C" _declspec(dllexport) unsigned char* export_get_easy_response(SClass* me_, signed long long* returnCode)
+{
+	std::string result;
+	SCurl* me2 = (SCurl*)me_;
+	CURL* handle = me2->Curl;
+
+#ifdef SKIP_PEER_VERIFICATION
+	DLLFuncs.curl_easy_setopt(handle, CURLOPT_SSL_VERIFYPEER, 0L);
+#endif
+#ifdef SKIP_HOSTNAME_VERIFICATION
+	DLLFuncs.curl_easy_setopt(handle, CURLOPT_SSL_VERIFYHOST, 0L);
+#endif
+	DLLFuncs.curl_easy_setopt(handle, CURLOPT_WRITEFUNCTION, WriteCallback);
+	DLLFuncs.curl_easy_setopt(handle, CURLOPT_WRITEDATA, &result);
+	*returnCode = (signed long long)export_curl_easy_perform(me_);
+	return WStrToKuinStr(StrToWstr(result));
 }
 
 extern "C" _declspec(dllexport) void export_curl_easy_cleanup(SClass * me_)

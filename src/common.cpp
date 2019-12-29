@@ -1,17 +1,6 @@
 #include "common.h"
 #include <stdexcept>
 
-SEnvVars EnvVars;
-
-void FreeMem(void* ptr)
-{
-	HeapFree(EnvVars.Heap, 0, ptr);
-#if defined(_DEBUG)
-	(*EnvVars.HeapCnt)--;
-	ASSERT(*EnvVars.HeapCnt >= 0);
-#endif
-}
-
 std::string WstrToStr(std::wstring wstr)
 {
 	int len_str = wstr.length();
@@ -21,10 +10,27 @@ std::string WstrToStr(std::wstring wstr)
 
 	if (WideCharToMultiByte(CP_UTF8, 0, wstr.c_str(), len_str, buf, (int)len, NULL, NULL) != (int)len)
 	{
-		FreeMem(buf);
+		free(buf);
 		std::runtime_error("wchar_t char convert failed\n");
 	}
 	buf[len] = '\0';
 	std::string retVal(buf);
+	return retVal;
+}
+
+std::wstring StrToWstr(std::string str)
+{
+	int len_str = str.length();
+	size_t len = (size_t)MultiByteToWideChar(CP_UTF8, 0, str.c_str(), len_str, NULL, 0);
+	wchar_t* buf = (wchar_t*)malloc(sizeof(wchar_t) * (len + 1));
+	memset(buf, 0, sizeof(wchar_t) * (len + 1));
+
+	if (MultiByteToWideChar(CP_UTF8, 0, str.c_str(), len_str, buf, (int)len) != (int)len)
+	{
+		free(buf);
+		std::runtime_error("char wchar_t convert failed\n");;
+	}
+	buf[len] = '\0';
+	std::wstring retVal(buf);
 	return retVal;
 }

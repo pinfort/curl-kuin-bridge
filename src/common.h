@@ -21,3 +21,4 @@ void* AllocMem(size_t size);
 void FreeMem(void* ptr);
 
 std::string WstrToStr(std::wstring wstr);
+std::wstring StrToWstr(std::string str);
