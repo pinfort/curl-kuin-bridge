@@ -59,14 +59,15 @@ extern "C" _declspec(dllexport) unsigned char* export_get_easy_response(SClass* 
 	SCurl* me2 = (SCurl*)me_;
 	CURL* handle = me2->Curl;
 
-#ifdef SKIP_PEER_VERIFICATION
+//#ifdef SKIP_PEER_VERIFICATION
 	DLLFuncs.curl_easy_setopt(handle, CURLOPT_SSL_VERIFYPEER, 0L);
-#endif
-#ifdef SKIP_HOSTNAME_VERIFICATION
+//#endif
+//#ifdef SKIP_HOSTNAME_VERIFICATION
 	DLLFuncs.curl_easy_setopt(handle, CURLOPT_SSL_VERIFYHOST, 0L);
-#endif
+//#endif
 	DLLFuncs.curl_easy_setopt(handle, CURLOPT_WRITEFUNCTION, WriteCallback);
 	DLLFuncs.curl_easy_setopt(handle, CURLOPT_WRITEDATA, &result);
+	DLLFuncs.curl_easy_setopt(handle, CURLOPT_HEADER, (void*)1L);
 	*returnCode = (signed long long)export_curl_easy_perform(me_);
 	return WStrToKuinStr(StrToWstr(result));
 }
