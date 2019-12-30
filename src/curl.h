@@ -1,8 +1,9 @@
 #pragma once
 
 #include <curl/curl.h>
-#include <string>
 #include <stdexcept>
+
+#include "common.h"
 
 typedef struct SClass
 {
@@ -15,6 +16,42 @@ typedef struct SCurl
 	SClass Class;
 	CURL* Curl;
 } SCurl;
+
+typedef struct SResponse
+{
+	SClass Class;
+	unsigned char* body;
+	unsigned char* header;
+
+	int appendBody(std::wstring str)
+	{
+		if (this->body == NULL)
+		{
+			this->body = WStrToKuinStr(str);
+		}
+		else {
+			std::wstring old = KuinStrToWStr(this->body);
+			old.append(str);
+			this->body = WStrToKuinStr(old);
+		}
+		return 0;
+	}
+
+	int appendHeader(std::wstring str)
+	{
+		if (this->header == NULL)
+		{
+			this->header = WStrToKuinStr(str);
+		}
+		else
+		{
+			std::wstring old = KuinStrToWStr(this->header);
+			old.append(str);
+			this->header = WStrToKuinStr(old);
+		}
+		return 0;
+	}
+} SResponse;
 
 class Curl
 {

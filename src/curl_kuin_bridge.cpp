@@ -47,29 +47,45 @@ extern "C" _declspec(dllexport) int export_curl_easy_perform(SClass * me_)
 	return DLLFuncs.curl_easy_perform(handle);
 }
 
-static size_t WriteCallback(char* contents, size_t size, size_t nmemb, void* userp)
+static size_t WriteCallback(char* contents, size_t size, size_t nmemb, SResponse** userp)
 {
-	((std::string*)userp)->append(contents);
+	std::string input(contents);
+	(*userp)->appendBody(StrToWstr(input));
 	return size * nmemb;
 }
 
-extern "C" _declspec(dllexport) unsigned char* export_get_easy_response(SClass* me_, signed long long* returnCode)
+extern "C" _declspec(dllexport) int export_config_easy_response(SClass* me_, SClass** me2)
 {
-	std::string result;
-	SCurl* me2 = (SCurl*)me_;
-	CURL* handle = me2->Curl;
+	SCurl* me3 = (SCurl*)me_;
+	CURL* handle = me3->Curl;
+	SResponse** me4 = reinterpret_cast<SResponse**>(me2);
 
-//#ifdef SKIP_PEER_VERIFICATION
+	//#ifdef SKIP_PEER_VERIFICATION
 	DLLFuncs.curl_easy_setopt(handle, CURLOPT_SSL_VERIFYPEER, 0L);
-//#endif
-//#ifdef SKIP_HOSTNAME_VERIFICATION
+	//#endif
+	//#ifdef SKIP_HOSTNAME_VERIFICATION
 	DLLFuncs.curl_easy_setopt(handle, CURLOPT_SSL_VERIFYHOST, 0L);
-//#endif
+	//#endif
 	DLLFuncs.curl_easy_setopt(handle, CURLOPT_WRITEFUNCTION, WriteCallback);
-	DLLFuncs.curl_easy_setopt(handle, CURLOPT_WRITEDATA, &result);
-	DLLFuncs.curl_easy_setopt(handle, CURLOPT_HEADER, (void*)1L);
-	*returnCode = (signed long long)export_curl_easy_perform(me_);
-	return WStrToKuinStr(StrToWstr(result));
+	return DLLFuncs.curl_easy_setopt(handle, CURLOPT_WRITEDATA, me4);
+}
+
+static size_t HeaderCallback(char* contents, size_t size, size_t nmemb, SResponse** userp)
+{
+	std::string input(contents);
+	(*userp)->appendHeader(StrToWstr(input));
+	return size * nmemb;
+}
+
+extern "C" _declspec(dllexport) int export_config_easy_header(SClass * me_, SClass * *me2)
+{
+	SCurl* me3 = (SCurl*)me_;
+	CURL* handle = me3->Curl;
+	SResponse** me4 = reinterpret_cast<SResponse**>(me2);
+	DLLFuncs.curl_easy_setopt(handle, CURLOPT_SSL_VERIFYPEER, 0L);
+	DLLFuncs.curl_easy_setopt(handle, CURLOPT_SSL_VERIFYHOST, 0L);
+	DLLFuncs.curl_easy_setopt(handle, CURLOPT_HEADERFUNCTION, HeaderCallback);
+	return DLLFuncs.curl_easy_setopt(handle, CURLOPT_HEADERDATA, me4);
 }
 
 extern "C" _declspec(dllexport) void export_curl_easy_cleanup(SClass * me_)
