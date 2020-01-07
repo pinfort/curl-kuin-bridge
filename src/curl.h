@@ -2,6 +2,7 @@
 
 #include <curl/curl.h>
 #include <stdexcept>
+#include <future>
 
 #include "common.h"
 
@@ -16,6 +17,18 @@ typedef struct SCurl
 	SClass Class;
 	CURL* Curl;
 } SCurl;
+
+typedef struct SCurlAsyncTask
+{
+	SClass Class;
+	std::future<long>* task;
+
+	int setTask(std::future<long>* task)
+	{
+		this->task = task;
+		return 0;
+	}
+} SCurlAsyncTask;
 
 typedef struct SResponse
 {
