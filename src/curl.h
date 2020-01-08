@@ -21,13 +21,7 @@ typedef struct SCurl
 typedef struct SCurlAsyncTask
 {
 	SClass Class;
-	std::future<long>* task;
-
-	int setTask(std::future<long>* task)
-	{
-		this->task = task;
-		return 0;
-	}
+	std::future<long>* Task;
 } SCurlAsyncTask;
 
 typedef struct SResponse

@@ -71,22 +71,49 @@ extern "C" _declspec(dllexport) int export_config_easy_response(SClass* me_, SCl
 	return DLLFuncs.curl_easy_setopt(handle, CURLOPT_WRITEDATA, me4);
 }
 
-extern "C" _declspec(dllexport) SClass* export_async_perform(SClass* me_)
+extern "C" _declspec(dllexport) SClass* export_async_perform(SClass* me_, SClass* me2)
 {
-	SCurl* me2 = (SCurl*)me_;
-	CURL* handle = me2->Curl;
+	SCurl* me3 = (SCurl*)me_;
+	CURL* handle = me3->Curl;
+	SCurlAsyncTask* me4 = (SCurlAsyncTask*)me2;
 
-	//std::future<long> task = std::future<long>();
-	//task = std::async(std::launch::async,
-	//	[handle]() -> long
-	//	{
-	//		//return DLLFuncs.curl_easy_perform(handle);
-	//		return 0L;
-	//	}
-	//);
-	SCurlAsyncTask* task_manager = new SCurlAsyncTask();
-	//task_manager->setTask(&task);
-	return (SClass*)task_manager;
+	std::future<long> task = std::future<long>();
+	task = std::async(std::launch::async,
+		[handle]() -> long
+		{
+			//return dllfuncs.curl_easy_perform(handle);
+			return 0L;
+		}
+	);
+	me4->Task = &task;
+	return me2;
+}
+
+extern "C" _declspec(dllexport) int export_async_task_get(SClass * me_)
+{
+	SCurlAsyncTask* me2 = (SCurlAsyncTask*)me_;
+	std::future<long>* task = me2->Task;
+	long res = (*task).get();
+	//long res = 0l;
+	printf("execute\n");
+	return res;
+	//return 0;
+}
+
+extern "C" _declspec(dllexport) int export_testfunction(SClass * me_)
+{
+	SCurl* me3 = (SCurl*)me_;
+	CURL* handle = me3->Curl;
+	printf("%d", sizeof(std::future<long>*));
+
+	std::future<long> task = std::future<long>();
+	task = std::async(std::launch::async,
+		[handle]() -> long
+		{
+			return DLLFuncs.curl_easy_perform(handle);
+		}
+	);
+	return task.get();
 }
 
 static size_t HeaderCallback(char* contents, size_t size, size_t nmemb, SResponse** userp)
@@ -112,16 +139,4 @@ extern "C" _declspec(dllexport) void export_curl_easy_cleanup(SClass * me_)
 	SCurl* me2 = (SCurl*)me_;
 	CURL* handle = me2->Curl;
 	return DLLFuncs.curl_easy_cleanup(handle);
-}
-
-extern "C" _declspec(dllexport) int export_async_task_get(SClass * me_)
-{
-	printf("called\n");
-	/*SCurlAsyncTask* task = (SCurlAsyncTask*)me_;
-	printf("convt\n");
-	std::future<long>* a = task->task;
-	printf("take\n");
-	long b = a->get();
-	printf("execute\n");*/
-	return 0;
 }
