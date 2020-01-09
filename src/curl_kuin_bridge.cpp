@@ -61,6 +61,7 @@ extern "C" _declspec(dllexport) int export_config_easy_response(SClass* me_, SCl
 	CURL* handle = me3->Curl;
 	SResponse** me4 = reinterpret_cast<SResponse**>(me2);
 
+	// TODO: SSLÇ…ä÷Ç∑ÇÈê›íËÇÇ±Ç±Ç≈Ç‚ÇÈÇ©ÅAKuinÇ©ÇÁê›íËÇ≥ÇπÇÈçlÇ¶ÇÈ
 	//#ifdef SKIP_PEER_VERIFICATION
 	DLLFuncs.curl_easy_setopt(handle, CURLOPT_SSL_VERIFYPEER, 0L);
 	//#endif
@@ -78,42 +79,19 @@ extern "C" _declspec(dllexport) SClass* export_async_perform(SClass* me_, SClass
 	SCurlAsyncTask* me4 = (SCurlAsyncTask*)me2;
 
 	std::future<long> task = std::future<long>();
-	task = std::async(std::launch::async,
+	me4->Task = std::async(std::launch::async,
 		[handle]() -> long
 		{
-			//return dllfuncs.curl_easy_perform(handle);
-			return 0L;
+			return DLLFuncs.curl_easy_perform(handle);
 		}
 	);
-	me4->Task = &task;
 	return me2;
 }
 
 extern "C" _declspec(dllexport) int export_async_task_get(SClass * me_)
 {
 	SCurlAsyncTask* me2 = (SCurlAsyncTask*)me_;
-	std::future<long>* task = me2->Task;
-	long res = (*task).get();
-	//long res = 0l;
-	printf("execute\n");
-	return res;
-	//return 0;
-}
-
-extern "C" _declspec(dllexport) int export_testfunction(SClass * me_)
-{
-	SCurl* me3 = (SCurl*)me_;
-	CURL* handle = me3->Curl;
-	printf("%d", sizeof(std::future<long>*));
-
-	std::future<long> task = std::future<long>();
-	task = std::async(std::launch::async,
-		[handle]() -> long
-		{
-			return DLLFuncs.curl_easy_perform(handle);
-		}
-	);
-	return task.get();
+	return me2->Task.get();
 }
 
 static size_t HeaderCallback(char* contents, size_t size, size_t nmemb, SResponse** userp)
@@ -128,6 +106,8 @@ extern "C" _declspec(dllexport) int export_config_easy_header(SClass * me_, SCla
 	SCurl* me3 = (SCurl*)me_;
 	CURL* handle = me3->Curl;
 	SResponse** me4 = reinterpret_cast<SResponse**>(me2);
+
+	// TODO: SSLÇ…ä÷Ç∑ÇÈê›íËÇKuinë§Ç≈Ç≥ÇπÇÈÇ©çlÇ¶ÇÈ
 	DLLFuncs.curl_easy_setopt(handle, CURLOPT_SSL_VERIFYPEER, 0L);
 	DLLFuncs.curl_easy_setopt(handle, CURLOPT_SSL_VERIFYHOST, 0L);
 	DLLFuncs.curl_easy_setopt(handle, CURLOPT_HEADERFUNCTION, HeaderCallback);
