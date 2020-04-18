@@ -29,6 +29,7 @@ typedef struct SResponse
 	SClass Class;
 	unsigned char* body;
 	unsigned char* header;
+	unsigned char* binary_body;
 
 	int appendBody(std::wstring str)
 	{
@@ -55,6 +56,22 @@ typedef struct SResponse
 			std::wstring old = KuinStrToWStr(this->header);
 			old.append(str);
 			this->header = WStrToKuinStr(old);
+		}
+		return 0;
+	}
+
+	int appendBinaryBody(unsigned char* str)
+	{
+		if (this->binary_body == NULL)
+		{
+			this->binary_body = str;
+		}
+		else
+		{
+			std::string org(reinterpret_cast<char*>(this->binary_body));
+			std::string add_str(reinterpret_cast<char*>(str));
+			org.append(add_str);
+			this->binary_body = reinterpret_cast<unsigned char*>(const_cast<char*>(org.c_str()));
 		}
 		return 0;
 	}
