@@ -30,6 +30,7 @@ typedef struct SResponse
 	unsigned char* body;
 	unsigned char* header;
 	unsigned char* binary_body;
+	long binary_index = 0L;
 
 	int appendBody(std::wstring str)
 	{
@@ -60,19 +61,13 @@ typedef struct SResponse
 		return 0;
 	}
 
-	int appendBinaryBody(unsigned char* str)
+	int appendBinaryBody(unsigned char* str, size_t size)
 	{
-		if (this->binary_body == NULL)
-		{
-			this->binary_body = str;
-		}
-		else
-		{
-			std::string org(reinterpret_cast<char*>(this->binary_body));
-			std::string add_str(reinterpret_cast<char*>(str));
-			org.append(add_str);
-			this->binary_body = reinterpret_cast<unsigned char*>(const_cast<char*>(org.c_str()));
-		}
+		this->binary_body = (unsigned char*)malloc(this->binary_index + size + 1);
+		memset(this->binary_body, 0, this->binary_index + size + 1);
+		memcpy((void*)&this->binary_body[this->binary_index], str, size);
+		this->binary_index += size;
+		this->binary_body[this->binary_index] = '\0';
 		return 0;
 	}
 } SResponse;
