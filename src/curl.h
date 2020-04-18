@@ -63,9 +63,19 @@ typedef struct SResponse
 
 	int appendBinaryBody(unsigned char* str, size_t size)
 	{
-		this->binary_body = (unsigned char*)malloc(this->binary_index + size + 1);
-		memset(this->binary_body, 0, this->binary_index + size + 1);
-		memcpy((void*)&this->binary_body[this->binary_index], str, size);
+		if (this->binary_index > 0)
+		{
+			unsigned char* tmp_ptr = this->binary_body;
+			this->binary_body = (unsigned char*)malloc(this->binary_index + size + 1);
+			memcpy((void*)&this->binary_body, tmp_ptr, this->binary_index);
+			memcpy((void*)&this->binary_body[this->binary_index], str, size);
+		}
+		else
+		{
+			this->binary_body = (unsigned char*)malloc(size + 1);
+			memcpy((void*)this->binary_body, str, size);
+		}
+		
 		this->binary_index += size;
 		this->binary_body[this->binary_index] = '\0';
 		return 0;
