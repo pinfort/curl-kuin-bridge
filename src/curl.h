@@ -63,7 +63,7 @@ typedef struct SResponse
 	int appendBinaryBody(unsigned char* str, size_t size)
 	{
 		std::vector<unsigned char> str_vector;
-		str_vector.insert(str_vector.end(), &str[0], &str[size - 1]);
+		str_vector.insert(str_vector.end(), &str[0], &str[size]);
 
 		if (this->binary_body == NULL)
 		{
@@ -75,6 +75,7 @@ typedef struct SResponse
 			old.insert(old.end(), str_vector.begin(), str_vector.end());
 			this->binary_body = CppVectorToKuinArray(old);
 		}
+
 		return 0;
 	}
 } SResponse;
