@@ -30,7 +30,6 @@ typedef struct SResponse
 	unsigned char* body;
 	unsigned char* header;
 	unsigned char* binary_body;
-	long binary_index = 0L;
 
 	int appendBody(std::wstring str)
 	{
@@ -63,21 +62,19 @@ typedef struct SResponse
 
 	int appendBinaryBody(unsigned char* str, size_t size)
 	{
-		if (this->binary_index > 0)
+		std::vector<unsigned char> str_vector;
+		str_vector.insert(str_vector.end(), &str[0], &str[size - 1]);
+
+		if (this->binary_body == NULL)
 		{
-			unsigned char* tmp_ptr = this->binary_body;
-			this->binary_body = (unsigned char*)malloc(this->binary_index + size + 1);
-			memcpy((void*)&this->binary_body, tmp_ptr, this->binary_index);
-			memcpy((void*)&this->binary_body[this->binary_index], str, size);
+			this->binary_body = CppVectorToKuinArray(str_vector);
 		}
 		else
 		{
-			this->binary_body = (unsigned char*)malloc(size + 1);
-			memcpy((void*)this->binary_body, str, size);
+			std::vector<unsigned char> old = KuinArrayToCppVector(this->binary_body);
+			old.insert(old.end(), str_vector.begin(), str_vector.end());
+			this->binary_body = CppVectorToKuinArray(old);
 		}
-		
-		this->binary_index += size;
-		this->binary_body[this->binary_index] = '\0';
 		return 0;
 	}
 } SResponse;
