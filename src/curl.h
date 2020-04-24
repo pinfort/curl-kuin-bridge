@@ -35,12 +35,12 @@ typedef struct SResponse
 	{
 		if (this->body == NULL)
 		{
-			this->body = WStrToKuinStr(str);
+			this->body = WStrToKuinStr(str, 10);
 		}
 		else {
 			std::wstring old = KuinStrToWStr(this->body);
 			old.append(str);
-			this->body = WStrToKuinStr(old);
+			this->body = WStrToKuinStr(old, KuinArray(this->body).getDefaultRefCntFunc());
 		}
 		return 0;
 	}
@@ -49,35 +49,35 @@ typedef struct SResponse
 	{
 		if (this->header == NULL)
 		{
-			this->header = WStrToKuinStr(str);
+			this->header = WStrToKuinStr(str, 10);
 		}
 		else
 		{
 			std::wstring old = KuinStrToWStr(this->header);
 			old.append(str);
-			this->header = WStrToKuinStr(old);
+			this->header = WStrToKuinStr(old, KuinArray(this->header).getDefaultRefCntFunc());
 		}
 		return 0;
 	}
 
-	int appendBinaryBody(unsigned char* str, size_t size)
-	{
-		std::vector<unsigned char> str_vector;
-		str_vector.insert(str_vector.end(), &str[0], &str[size]);
-
-		if (this->binary_body == NULL)
-		{
-			this->binary_body = CppVectorToKuinArray(str_vector);
-		}
-		else
-		{
-			std::vector<unsigned char> old = KuinArrayToCppVector(this->binary_body);
-			old.insert(old.end(), str_vector.begin(), str_vector.end());
-			this->binary_body = CppVectorToKuinArray(old);
-		}
-
-		return 0;
-	}
+	//int appendBinaryBody(unsigned char* str, size_t size)
+	//{
+	//	std::vector<unsigned char> str_vector;
+	//	str_vector.insert(str_vector.end(), &str[0], &str[size]);
+	//
+	//	if (this->binary_body == NULL)
+	//	{
+	//		this->binary_body = CppVectorToKuinArray(str_vector);
+	//	}
+	//	else
+	//	{
+	//		std::vector<unsigned char> old = KuinArrayToCppVector(this->binary_body);
+	//		old.insert(old.end(), str_vector.begin(), str_vector.end());
+	//		this->binary_body = CppVectorToKuinArray(old);
+	//	}
+	//
+	//	return 0;
+	//}
 } SResponse;
 
 class Curl

@@ -52,7 +52,7 @@ static size_t WriteCallback(char* contents, size_t size, size_t nmemb, SResponse
 {
 	std::string input(contents);
 	(*userp)->appendBody(StrToWstr(input));
-	(*userp)->appendBinaryBody(reinterpret_cast<unsigned char*>(contents), size * nmemb);
+	//(*userp)->appendBinaryBody(reinterpret_cast<unsigned char*>(contents), size * nmemb);
 	return size * nmemb;
 }
 
@@ -120,4 +120,15 @@ extern "C" _declspec(dllexport) void export_curl_easy_cleanup(SClass * me_)
 	SCurl* me2 = (SCurl*)me_;
 	CURL* handle = me2->Curl;
 	return DLLFuncs.curl_easy_cleanup(handle);
+}
+
+extern "C" _declspec(dllexport) void export_dump_memory(unsigned char* input)
+{
+	unsigned long long len = KuinArray(input).getLen();
+	printf("===================memory dump started===========\n");
+	for (size_t i = 0; i < len; i++)
+	{
+		printf(" 0x%02x", input[i]);
+	}
+	printf("\n================memory dump finished================\n");
 }
