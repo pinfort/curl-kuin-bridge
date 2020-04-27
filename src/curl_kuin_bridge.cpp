@@ -52,7 +52,7 @@ static size_t WriteCallback(char* contents, size_t size, size_t nmemb, SResponse
 {
 	std::string input(contents);
 	(*userp)->appendBody(StrToWstr(input));
-	//(*userp)->appendBinaryBody(reinterpret_cast<unsigned char*>(contents), size * nmemb);
+	(*userp)->appendBinaryBody(reinterpret_cast<unsigned char*>(contents), size * nmemb);
 	return size * nmemb;
 }
 

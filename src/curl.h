@@ -27,13 +27,13 @@ typedef struct SCurlAsyncTask
 typedef struct SResponse
 {
 	SClass Class;
-	unsigned char* body;
-	unsigned char* header;
-	unsigned char* binary_body;
+	unsigned char* body = nullptr;
+	unsigned char* header = nullptr;
+	unsigned char* binary_body = nullptr;
 
 	int appendBody(std::wstring str)
 	{
-		if (this->body == NULL)
+		if (this->body == nullptr)
 		{
 			this->body = WStrToKuinStr(str, 10);
 		}
@@ -47,7 +47,7 @@ typedef struct SResponse
 
 	int appendHeader(std::wstring str)
 	{
-		if (this->header == NULL)
+		if (this->header == nullptr)
 		{
 			this->header = WStrToKuinStr(str, 10);
 		}
@@ -60,24 +60,26 @@ typedef struct SResponse
 		return 0;
 	}
 
-	//int appendBinaryBody(unsigned char* str, size_t size)
-	//{
-	//	std::vector<unsigned char> str_vector;
-	//	str_vector.insert(str_vector.end(), &str[0], &str[size]);
-	//
-	//	if (this->binary_body == NULL)
-	//	{
-	//		this->binary_body = CppVectorToKuinArray(str_vector);
-	//	}
-	//	else
-	//	{
-	//		std::vector<unsigned char> old = KuinArrayToCppVector(this->binary_body);
-	//		old.insert(old.end(), str_vector.begin(), str_vector.end());
-	//		this->binary_body = CppVectorToKuinArray(old);
-	//	}
-	//
-	//	return 0;
-	//}
+	int appendBinaryBody(unsigned char* str, size_t size)
+	{
+		std::vector<unsigned char> str_vector;
+		str_vector.insert(str_vector.end(), &str[0], &str[size]);
+
+		if (this->binary_body == nullptr)
+		{
+			this->binary_body = CppVectorToKuinArray(str_vector, 10);
+		}
+		else
+		{
+			unsigned char* bin = this->binary_body;
+			KuinArray kuin_arr = KuinArray(bin);
+			unsigned long long len = kuin_arr.getLen();
+			std::vector<unsigned char> old = KuinArrayToCppVector(this->binary_body);
+			old.insert(old.end(), str_vector.begin(), str_vector.end());
+			this->binary_body = CppVectorToKuinArray(old, kuin_arr.getDefaultRefCntFunc());
+		}
+		return 0;
+	}
 } SResponse;
 
 class Curl
