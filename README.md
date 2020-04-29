@@ -7,6 +7,6 @@ This is backend(C++ side) library of KuURL project. See also [KuURL](https://git
 
 # How to Use?
 
-1. add curl_kuin_bridge.dll into related_files in your Kuin prop file.
+1. add curl_kuin_bridge.dll and libcurl-x64.dll into related_files in your Kuin prop file.
 1. add dependency 'kuurl'.
 1. enjoy!
