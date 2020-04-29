@@ -1,4 +1,4 @@
-# CURL Kuin
+# CURL Kuin bridge
 use curl in Kuin
 
 # What is this?
