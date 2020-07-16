@@ -41,6 +41,14 @@ extern "C" _declspec(dllexport) int export_curl_easy_setopt_str(SClass * me_, si
 	return export_curl_easy_setopt_org(me_, option, const_cast<char*>(param_str.c_str()));
 }
 
+extern "C" _declspec(dllexport) int export_curl_easy_setopt_arr(SClass * me_, signed long long option, unsigned char* parameter)
+{
+	// éQè∆å^óp
+	KuinArray kuin_arr(parameter);
+
+	return export_curl_easy_setopt_org(me_, option, kuin_arr.getBody());
+}
+
 extern "C" _declspec(dllexport) int export_curl_easy_perform(SClass * me_)
 {
 	SCurl* me2 = (SCurl*)me_;
