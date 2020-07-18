@@ -1,15 +1,12 @@
-#include "common.h"
+#pragma once
+
 #include "curl.h"
-#include <stdexcept>
-#include <kuin_type_bridge.h>
-#include <future>
 
 BOOL WINAPI DllMain(HINSTANCE, DWORD, LPVOID)
 {
 	return TRUE;
 }
 
-std::string dllPath = std::string("data\\libcurl-x64.dll");
 Curl DLLFuncs = Curl(dllPath);
 
 extern "C" _declspec(dllexport) SClass * export_curl_easy_init(SClass * me_)

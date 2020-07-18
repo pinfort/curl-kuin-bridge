@@ -1,16 +1,9 @@
 #pragma once
 
-#include <curl/curl.h>
 #include <stdexcept>
 #include <future>
 
 #include "common.h"
-
-typedef struct SClass
-{
-	unsigned long long RefCnt;
-	void* ClassTable;
-} SClass;
 
 typedef struct SCurl
 {
