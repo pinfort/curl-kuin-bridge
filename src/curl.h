@@ -82,11 +82,13 @@ public:
 	using TCurlEasySetOptProc = CURLcode(*)(CURL*, CURLoption, void*);
 	using TCurlEasyPerformProc = CURLcode(*)(CURL*);
 	using TCurlEasyCleanupProc = void(*)(CURL*);
+	using TCurlEasyResetProc = void(*)(CURL*);
 
 	TCurlEasyInitProc curl_easy_init;
 	TCurlEasySetOptProc curl_easy_setopt;
 	TCurlEasyPerformProc curl_easy_perform;
 	TCurlEasyCleanupProc curl_easy_cleanup;
+	TCurlEasyResetProc curl_easy_reset;
 
 	HMODULE dll;
 
@@ -131,6 +133,14 @@ public:
 			std::runtime_error("curl_easy_cleanup func cannot be loaded.\n");
 		}
 		this->curl_easy_cleanup = reinterpret_cast<TCurlEasyCleanupProc>(proc4);
+
+		FARPROC proc5 = GetProcAddress(dll, "curl_easy_reset");
+		if (proc5 == NULL)
+		{
+			printf("curl_easy_reset func cannot be loaded.\n");
+			std::runtime_error("curl_easy_reset func cannot be loaded.\n");
+		}
+		this->curl_easy_reset = reinterpret_cast<TCurlEasyResetProc>(proc5);
 	};
 
 	~Curl()

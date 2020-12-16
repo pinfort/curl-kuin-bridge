@@ -127,6 +127,13 @@ extern "C" _declspec(dllexport) void export_curl_easy_cleanup(SClass * me_)
 	return DLLFuncs.curl_easy_cleanup(handle);
 }
 
+extern "C" _declspec(dllexport) void export_curl_easy_reset(SClass * me_)
+{
+	SCurl* me2 = (SCurl*)me_;
+	CURL* handle = me2->Curl;
+	return DLLFuncs.curl_easy_reset(handle);
+}
+
 extern "C" _declspec(dllexport) void export_dump_memory(unsigned char* input)
 {
 	unsigned long long len = KuinArray(input).getLen();
